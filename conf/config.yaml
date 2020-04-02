@@ -1,0 +1,17 @@
+httpserver_address: :3611
+wechat_token: token
+wechat_app_id: app_id
+wechat_secret: secret
+wechat_id: wechat_id
+wechat_interface: /interface/wechat
+log_file: log/eatmyamway.log
+database_driver: mysql
+database_source: user:pass@(host:port)/database?charset=utf8mb4&parseTime=True&loc=Local
+database_max_idle_conns: 10
+database_max_open_conns: 100
+database_conn_max_life_time: 3600000000000
+
+prologue: Hi~ o(*￣▽￣*)ブ欢迎光临安利小卖部！\n小店共有安利[%d]枚，你已寄售安利[%d]枚~\n客官这是准备？\n0：被人安利\n1：安利别人
+not_support: 请输入有效数字≧ ﹏ ≦
+internal_error: 店小二失踪了，再试一次8~
+not_found: 客官...8好意思...缺货了...请重新选择类型...(✿◡‿◡)
