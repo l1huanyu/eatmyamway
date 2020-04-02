@@ -4,6 +4,6 @@ func Models() []interface{} {
 	return []interface{}{
 		new(Amway),
 		new(User),
-		new(Record),
+		new(Relation),
 	}
 }

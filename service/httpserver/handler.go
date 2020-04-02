@@ -1,4 +1,4 @@
-package wechat
+package httpserver
 
 import (
 	"crypto/sha1"
@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/l1huanyu/eatmyamway/interface/ui"
+	"github.com/l1huanyu/eatmyamway/service/scheduler"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -38,8 +38,6 @@ func checkSignature(c echo.Context) error {
 }
 
 func receiveMessages(c echo.Context) error {
-	content := ""
-
 	request := new(requestMsg)
 	err := c.Bind(request)
 	if err != nil {
@@ -53,34 +51,35 @@ func receiveMessages(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
+	node := &scheduler.SchedulerNode{
+		OpenID: request.fromUserName,
+		Msg:    request.content,
+	}
+
 	switch request.msgType {
 	case _TEXT:
 		if len(request.content) == 0 {
 			return c.NoContent(http.StatusBadRequest)
 		}
-		// 开始调度
-		content = ui.Schedule(request.fromUserName, request.content)
+		// TODO:从redis中读取下一跳
 
 	case _EVENT:
 		if request.event == _SUBSCRIBE {
-			content = ui.Prologue(request.fromUserName)
-		} else {
-			if request.event == _UNSUBSCRIBE {
-				ui.Realese(request.fromUserName)
-			}
-			return c.NoContent(http.StatusOK)
+			node.NextHop = scheduler.NodeSubscribe
+		} else if request.event == _UNSUBSCRIBE {
+			node.NextHop = scheduler.NodeUnsubscribe
 		}
-
-	default:
-		content = ui.NotSuport()
 	}
+
+	// 调度执行下一跳动作
+	node.Schedule()
 
 	response := &responseMsg{
 		toUserName:   request.fromUserName,
 		fromUserName: request.toUserName,
 		createTime:   int(time.Now().Unix()),
 		msgType:      _TEXT,
-		content:      content,
+		content:      node.Content,
 	}
 
 	return c.String(http.StatusOK, fmt.Sprintf(_RESPONSE_XML, response.toUserName, response.fromUserName, response.createTime, response.msgType, response.content))

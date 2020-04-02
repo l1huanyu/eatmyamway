@@ -1,8 +1,9 @@
-address: :3611
-token: token
-app_id: app_id
-secret: secret
+httpserver_address: :3611
+wechat_token: token
+wechat_app_id: app_id
+wechat_secret: secret
 wechat_id: wechat_id
+wechat_interface: /interface/wechat
 log_file: log/eatmyamway.log
 database_driver: mysql
 database_source: root:Li960127!@(api.minesystem.cn:13306)/eatmyamway?charset=utf8mb4&parseTime=True&loc=Local
