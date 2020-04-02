@@ -1,4 +1,4 @@
-package wechat
+package httpserver
 
 const (
 	_EVENT        = "event"
