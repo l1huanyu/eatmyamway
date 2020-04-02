@@ -1,6 +1,7 @@
 package wechat
 
 import (
+	"github.com/l1huanyu/eatmyamway/log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
@@ -14,5 +15,5 @@ func Run() {
 	e.GET("/interface/wechat", checkSignature)
 	e.POST("/interface/wechat", receiveMessages)
 
-	e.Start(viper.GetString("address"))
+	log.Error("Start", e.Start(viper.GetString("address")).Error(), nil)
 }

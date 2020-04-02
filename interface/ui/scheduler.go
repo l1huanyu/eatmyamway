@@ -21,5 +21,5 @@ func Prologue(userID string) string {
 
 //NotSuport 不支持
 func NotSuport() string {
-	return _NOT_SUPORT
+	return viper.GetString("not_support")
 }
