@@ -15,5 +15,6 @@ func Start() {
 	e.GET(viper.GetString("wechat_interface"), checkSignature)
 	e.POST(viper.GetString("wechat_interface"), receiveMessages)
 
+	log.Info("main", "EAT MY AMWAY! ", nil)
 	log.Error("Start", e.Start(viper.GetString("httpserver_address")).Error(), nil)
 }

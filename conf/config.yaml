@@ -11,7 +11,10 @@ database_max_idle_conns: 10
 database_max_open_conns: 100
 database_conn_max_life_time: 3600000000000
 
-prologue: Hi~ o(*￣▽￣*)ブ欢迎光临安利小卖部！\n小店共有安利[%d]枚，你已寄售安利[%d]枚~\n客官这是准备？\n0：被人安利\n1：安利别人
 not_support: 请输入有效数字≧ ﹏ ≦
-internal_error: 店小二失踪了，再试一次8~
-not_found: 客官...8好意思...缺货了...请重新选择类型...(✿◡‿◡)
+internal_error: '|д･)...肥肠包芡，由于不明电波干扰，宁的命令不见了，请再试一次8~'
+default_nick_name: 友人A
+
+node_subscribe: 久等了~ o(*￣▽￣*)ブ感谢宁关注【食我安利】！\n\n鲁迅先生曾经说过：愿中国青年都摆脱冷气，向他人安利，不必听冷漠以待者流的话。能安利的不吝啬，能接受的不拒绝。有一分热爱，发一分喜欢，就令萤火一般，也可以在黑暗里发一点光，不必等候炬火。此后如竟没有炬火：我便是唯一的光。
+node_update_nick_name: 
+node_dashboard: 所以~ (๑• . •๑)接下来做什么呢？\n0：想被安利...\n1：我想安利...\n2：查看我的信息

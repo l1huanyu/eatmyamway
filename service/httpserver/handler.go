@@ -9,9 +9,11 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/jinzhu/gorm"
+	"github.com/l1huanyu/eatmyamway/log"
+	"github.com/l1huanyu/eatmyamway/middleware/database"
 	"github.com/l1huanyu/eatmyamway/service/scheduler"
 	"github.com/labstack/echo/v4"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -41,17 +43,17 @@ func receiveMessages(c echo.Context) error {
 	request := new(requestMsg)
 	err := c.Bind(request)
 	if err != nil {
-		logrus.Error(err.Error())
+		log.Error("receiveMessages.echo.Context.Bind", err.Error(), nil)
 		return c.NoContent(http.StatusBadRequest)
 	}
 
 	err = gValidator.Struct(request)
 	if err != nil {
-		logrus.Error(err.Error())
+		log.Error("receiveMessages.gValidator.Struct", err.Error(), nil)
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	node := &scheduler.SchedulerNode{
+	node := &scheduler.Node{
 		OpenID: request.fromUserName,
 		Msg:    request.content,
 	}
@@ -59,15 +61,22 @@ func receiveMessages(c echo.Context) error {
 	switch request.msgType {
 	case _TEXT:
 		if len(request.content) == 0 {
+			log.Error("receiveMessages", "len(request.content) == 0", nil)
 			return c.NoContent(http.StatusBadRequest)
 		}
-		// TODO:从redis中读取下一跳
+		// 查找当前用户的下一跳
+		node.NextHop, err = database.QueryUserNextHopByOpenID(node.OpenID)
+		if err != nil && err == gorm.ErrRecordNotFound {
+			node.NextHop = scheduler.NodeSubscribe()
+		} else {
+			log.Error("database.QueryUserNextHopByOpenID", err.Error(), map[string]interface{}{"node.OpenID": node.OpenID})
+		}
 
 	case _EVENT:
 		if request.event == _SUBSCRIBE {
-			node.NextHop = scheduler.NodeSubscribe
+			node.NextHop = scheduler.NodeSubscribe()
 		} else if request.event == _UNSUBSCRIBE {
-			node.NextHop = scheduler.NodeUnsubscribe
+			node.NextHop = scheduler.NodeUnsubscribe()
 		}
 	}
 

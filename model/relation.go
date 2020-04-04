@@ -8,3 +8,7 @@ type Relation struct {
 	AmwayID uint `gorm:"index:index_relation_amway_id"`
 	Like    bool
 }
+
+func RelationTableName() string {
+	return "relations"
+}

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"os"
+	"os/signal"
 
 	"github.com/l1huanyu/eatmyamway/config"
 	"github.com/l1huanyu/eatmyamway/log"
@@ -15,7 +15,11 @@ import (
 var gCfg = pflag.StringP("config", "c", "", "eatmyamway config file path. ")
 
 func main() {
-	fmt.Print("~ 所以暂时将你👀闭了起来...(๑˘ ˘๑)")
+	fmt.Print("~ 所以暂时将你眼睛闭了起来...(๑˘ ˘๑)")
+
+	c := make(chan os.Signal, 0)
+	signal.Notify(c, os.Interrupt, os.Kill)
+	go safeExit(c)
 
 	// 初始化配置文件
 	pflag.Parse()
@@ -28,12 +32,21 @@ func main() {
 	log.Init()
 	defer log.Close()
 
-	log.Info("main", "LAST DANCE ~", nil)
-
 	// 打开数据库连接
 	database.Open()
 	defer database.Close()
 
-	// 前进四...
+	// 起飞飞飞 ~
 	httpserver.Start()
+}
+
+// 捕获ctrl c信号，在退出程序前关闭连接
+func safeExit(c chan os.Signal) {
+	<-c
+	log.Close()
+	if err := database.Close(); err != nil {
+		log.Info("database.Close", err.Error(), nil)
+	}
+	log.Info("safeExit", "LAST DANCE ~", nil)
+	os.Exit(0)
 }
