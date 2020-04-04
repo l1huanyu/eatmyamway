@@ -17,20 +17,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-var gValidator = validator.New()
-
 func checkSignature(c echo.Context) error {
 	signature := c.QueryParam("signature")
 	timestamp := c.QueryParam("timestamp")
 	nonce := c.QueryParam("nonce")
-	token := viper.GetString("access_token")
+	token := viper.GetString("wechat_token")
 	echoStr := c.QueryParam("echostr")
 
 	tmpArr := []string{token, timestamp, nonce}
 	sort.Strings(tmpArr)
-	tmpStr := strings.Join(tmpArr, "")
-	tmpBytes := sha1.Sum([]byte(tmpStr))
-	tmpStr = string(tmpBytes[:])
+	tmpStr := fmt.Sprintf("%x", sha1.Sum([]byte(strings.Join(tmpArr, ""))))
 
 	if strings.Compare(signature, tmpStr) != 0 {
 		return c.String(http.StatusBadRequest, "Check signature from wechat server failed. ")
@@ -47,20 +43,20 @@ func receiveMessages(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	err = gValidator.Struct(request)
+	err = validator.New().Struct(request)
 	if err != nil {
-		log.Error("receiveMessages.gValidator.Struct", err.Error(), nil)
+		log.Error("receiveMessages.validator.New().Struct", err.Error(), nil)
 		return c.NoContent(http.StatusBadRequest)
 	}
 
 	node := &scheduler.Node{
-		OpenID: request.fromUserName,
-		Msg:    request.content,
+		OpenID: request.FromUserName,
+		Msg:    request.Content,
 	}
 
-	switch request.msgType {
+	switch request.MsgType {
 	case _TEXT:
-		if len(request.content) == 0 {
+		if len(request.Content) == 0 {
 			log.Error("receiveMessages", "len(request.content) == 0", nil)
 			return c.NoContent(http.StatusBadRequest)
 		}
@@ -73,9 +69,9 @@ func receiveMessages(c echo.Context) error {
 		}
 
 	case _EVENT:
-		if request.event == _SUBSCRIBE {
+		if request.Event == _SUBSCRIBE {
 			node.NextHop = scheduler.NodeSubscribe()
-		} else if request.event == _UNSUBSCRIBE {
+		} else if request.Event == _UNSUBSCRIBE {
 			node.NextHop = scheduler.NodeUnsubscribe()
 		}
 	}
@@ -84,12 +80,12 @@ func receiveMessages(c echo.Context) error {
 	node.Schedule()
 
 	response := &responseMsg{
-		toUserName:   request.fromUserName,
-		fromUserName: request.toUserName,
-		createTime:   int(time.Now().Unix()),
-		msgType:      _TEXT,
-		content:      node.Content,
+		ToUserName:   request.FromUserName,
+		FromUserName: request.ToUserName,
+		CreateTime:   int(time.Now().Unix()),
+		MsgType:      _TEXT,
+		Content:      node.Content,
 	}
 
-	return c.String(http.StatusOK, fmt.Sprintf(_RESPONSE_XML, response.toUserName, response.fromUserName, response.createTime, response.msgType, response.content))
+	return c.String(http.StatusOK, fmt.Sprintf(_RESPONSE_XML, response.ToUserName, response.FromUserName, response.CreateTime, response.MsgType, response.Content))
 }

@@ -10,6 +10,7 @@ import (
 func Start() {
 	e := echo.New()
 
+	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.GET(viper.GetString("wechat_interface"), checkSignature)

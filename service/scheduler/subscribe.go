@@ -18,5 +18,5 @@ func queryOrCreateUser(node *Node) {
 	node.curuser = u
 
 	u.NextHop = _NodeSelectUpdateNickNameOrDashboard
-	node.Content = fmt.Sprintf("%s\n\n%s", viper.GetString("node_subscribe"), viper.GetString("node_select_update_nick_name_or_dashboard"))
+	node.Content = fmt.Sprintf("%s\n\n%s", viper.GetString("node_subscribe"), viper.GetString("node_select_update_nick_name_or_dashboard"), node.curuser.NickName)
 }
