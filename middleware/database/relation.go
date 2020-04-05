@@ -65,37 +65,38 @@ func UpdateInteractionRelation(r *model.Relation) error {
 		return err
 	}
 
-	// 当前用户不是聚焦安利的推送者
-	if a.UserID != u.ID {
-		au := new(model.User)
-		err = tx.First(au, a.UserID).Error
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-		// 获取被点赞经验值奖励
-		au.GainEXP(viper.GetUint("exp_somebody_like_my_amway"))
-		// 更新数据
-		err = tx.Model(au).Updates(map[string]interface{}{
-			au.EXPColumnName():   au.EXP,
-			au.LevelColumnName(): au.Level,
-		}).Error
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	} else {
-		// 可以点赞自己的安利
-		u.GainEXP(viper.GetUint("exp_somebody_like_my_amway"))
-	}
-
-	// 互动
 	// 用户获得互动经验值奖励
 	u.GainEXP(viper.GetUint("exp_interact_amway"))
-	if r.InteractionType == model.InteractionLike {
+
+	switch r.InteractionType {
+	case model.InteractionLike:
+		// 当前用户不是聚焦安利的推送者
+		if a.UserID != u.ID {
+			au := new(model.User)
+			err = tx.First(au, a.UserID).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+			// 获取被点赞经验值奖励
+			au.GainEXP(viper.GetUint("exp_somebody_like_my_amway"))
+			// 更新数据
+			err = tx.Model(au).Updates(map[string]interface{}{
+				au.EXPColumnName():   au.EXP,
+				au.LevelColumnName(): au.Level,
+			}).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		} else {
+			// 可以点赞自己的安利
+			u.GainEXP(viper.GetUint("exp_somebody_like_my_amway"))
+		}
+
 		// 点赞增加安利的生命值
 		a.HP += int(u.Level) * viper.GetInt("user_level_weight")
-	} else if r.InteractionType == model.InteractionDislike {
+	case model.InteractionDislike:
 		// 点踩减少安利的生命值
 		a.HP -= int(u.Level) * viper.GetInt("user_level_weight")
 		if a.HP <= 0 {

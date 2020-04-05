@@ -5,9 +5,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-func QueryAmwayRand() (*model.Amway, error) {
-	a := new(model.Amway)
-	err := Conn().Raw(`SELECT *
+// 按照生命值优先级随机读取N条记录
+func QueryAmwayRand(limit int) ([]*model.Amway, error) {
+	amways := []*model.Amway{}
+	rows, err := Conn().Raw(`SELECT *
 	FROM amways AS t1
 	JOIN
 	(
@@ -21,10 +22,19 @@ func QueryAmwayRand() (*model.Amway, error) {
 		(SELECT MIN(id) FROM amways )
 		) AS id
 	) AS t2 
-	WHERE t1.id >= t2.id 
+	WHERE t1.id >= t2.id and t1.valid > 0 
 	ORDER BY t1.id 
-	LIMIT 1`).Scan(a).Error
-	return a, err
+	`).Limit(limit).Rows()
+	defer rows.Close()
+	for i := 0; rows.Next(); i++ {
+		a := new(model.Amway)
+		err = rows.Scan(a)
+		if err != nil {
+			break
+		}
+		amways = append(amways, a)
+	}
+	return amways, err
 }
 
 func CreateAmway(userID, userLevel uint) error {

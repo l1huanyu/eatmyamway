@@ -7,6 +7,7 @@ import (
 
 	"github.com/l1huanyu/eatmyamway/config"
 	"github.com/l1huanyu/eatmyamway/log"
+	"github.com/l1huanyu/eatmyamway/middleware/cache"
 	"github.com/l1huanyu/eatmyamway/middleware/database"
 	"github.com/l1huanyu/eatmyamway/service/httpserver"
 	"github.com/spf13/pflag"
@@ -31,6 +32,9 @@ func main() {
 	// 初始化日志模块
 	log.Init()
 	defer log.Close()
+
+	// 初始化缓存
+	cache.Init()
 
 	// 打开数据库连接
 	database.Open()

@@ -2,11 +2,13 @@ package scheduler
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
 	"github.com/l1huanyu/eatmyamway/log"
+	"github.com/l1huanyu/eatmyamway/middleware/cache"
 	"github.com/l1huanyu/eatmyamway/middleware/database"
+	"github.com/l1huanyu/eatmyamway/model"
 	"github.com/spf13/viper"
 )
 
@@ -33,14 +35,35 @@ func queryAmwayRand(node *Node) {
 		return
 	}
 
-	a, err := database.QueryAmwayRand()
+	amways, err := database.QueryAmwayRand(viper.GetInt("query_amway_rand_limit"))
+	if len(amways) == 0 {
+		node.curuser.NextHop = _NodeDashboard
+		node.Content = viper.GetString("not_found")
+		return
+	}
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			node.curuser.NextHop = _NodeDashboard
-			node.Content = viper.GetString("not_found")
-		} else {
-			log.Error("queryAmwayRand.database.QueryAmwayRand", err.Error(), nil)
+		log.Error("queryAmwayRand.database.QueryAmwayRand", err.Error(), nil)
+		return
+	}
+
+	var a *model.Amway
+	key := fmt.Sprintf("curuserid%d", node.curuser.ID)
+	if read, found := cache.Get(key); found {
+		for i := range amways {
+			if _, ok := read.(map[uint]struct{})[amways[i].ID]; !ok {
+				a = amways[i]
+				break
+			}
 		}
+	} else {
+		// 缓存过期随机返回
+		a = amways[rand.Intn(len(amways))]
+	}
+
+	// 这一批全部已阅
+	if a.Valid == false {
+		node.curuser.NextHop = _NodeDashboard
+		node.Content = viper.GetString("not_found")
 		return
 	}
 

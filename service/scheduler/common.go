@@ -1,7 +1,10 @@
 package scheduler
 
 import (
+	"fmt"
+
 	"github.com/l1huanyu/eatmyamway/log"
+	"github.com/l1huanyu/eatmyamway/middleware/cache"
 	"github.com/l1huanyu/eatmyamway/middleware/database"
 )
 
@@ -13,6 +16,12 @@ func queryUser(node *Node) {
 		return
 	}
 	node.curuser = u
+
+	// 为活跃用户新建缓存
+	key := fmt.Sprintf("curuserid%d", u.ID)
+	if _, found := cache.Get(key); !found {
+		cache.Set(key, map[uint]struct{}{})
+	}
 }
 
 // 更新下一跳
