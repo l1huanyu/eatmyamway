@@ -20,3 +20,7 @@ func Set(key string, value interface{}) {
 func Get(key string) (interface{}, bool) {
 	return gCache.Get(key)
 }
+
+func Delete(key string) {
+	return gCache.Delete(key)
+}

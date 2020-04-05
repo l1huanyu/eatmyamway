@@ -61,7 +61,9 @@ func queryAmwayRand(node *Node) {
 		// 这一批全部已阅
 		if a == nil {
 			node.curuser.NextHop = _NodeDashboard
-			node.Content = viper.GetString("not_found")
+			node.Content = viper.GetString("read_all_amway") + "\n\n欢迎回来~ " + fmt.Sprintf(node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
+			// 清除当前用户的缓存
+			cache.Delete(key)
 			return
 		}
 	} else {
