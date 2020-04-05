@@ -29,7 +29,7 @@ func updateAmwayName(node *Node) {
 			return
 		}
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = fmt.Sprintf(node_dashboard, node.curuser.Level, node.curuser.NickName)
+		node.Content = fmt.Sprintf(node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
 	default:
 		a.Name = node.Msg
 		err := database.UpdatesAmway(a)
@@ -101,7 +101,7 @@ func updateAmwayFakePortal(node *Node) {
 		}
 		node.curuser.GainEXP(viper.GetUint("exp_publish_amway"))
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = fmt.Sprintf(node_dashboard, node.curuser.Level, node.curuser.NickName)
+		node.Content = fmt.Sprintf(node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
 	default:
 		a.FakePortal = node.Msg
 		a.Valid = true
@@ -112,6 +112,6 @@ func updateAmwayFakePortal(node *Node) {
 		}
 		node.curuser.GainEXP(viper.GetUint("exp_publish_amway"))
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = fmt.Sprintf(viper.GetString("publish_success")+"\n\n"+node_dashboard, node.curuser.Level, node.curuser.NickName)
+		node.Content = fmt.Sprintf(viper.GetString("publish_success")+"\n\n"+node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
 	}
 }

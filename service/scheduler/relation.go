@@ -65,7 +65,7 @@ func selectInteractOrQueryAmway(node *Node) {
 	case 4:
 		// 返回主界面
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = fmt.Sprintf(node_dashboard, node.curuser.Level, node.curuser.NickName)
+		node.Content = fmt.Sprintf(node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
 		return
 	default:
 		log.Error("queryFocusRelation", "invalid option", map[string]interface{}{"option": option})

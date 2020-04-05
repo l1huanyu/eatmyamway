@@ -22,7 +22,7 @@ func selectUpdateNickNameOrDashboard(node *Node) {
 		node.Content = node_update_nick_name
 	case 2:
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = fmt.Sprintf(node_dashboard, node.curuser.Level, node.curuser.NickName)
+		node.Content = fmt.Sprintf(node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
 	default:
 		log.Error("selectUpdateNickNameOrDashboard", "invalid option", map[string]interface{}{"option": option})
 		return
@@ -38,5 +38,5 @@ func updateUserNickName(node *Node) {
 		return
 	}
 	node.curuser.NextHop = _NodeDashboard
-	node.Content = fmt.Sprintf(node_dashboard, node.curuser.Level, node.curuser.NickName)
+	node.Content = fmt.Sprintf(node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
 }
