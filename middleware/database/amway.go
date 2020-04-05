@@ -5,28 +5,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+const queryAmwayRand = `SELECT * FROM amways AS t1 JOIN ( SELECT ROUND(RAND() * ( (SELECT MAX(id) FROM amways) - (SELECT MIN(id) FROM amways) ) + (SELECT MIN(id) FROM amways ) ) AS id ) AS t2 WHERE t1.id >= t2.id and t1.valid = 1 ORDER BY t1.id`
+
 // 按照生命值优先级随机读取N条记录
 func QueryAmwayRand(limit int) ([]*model.Amway, error) {
 	amways := []*model.Amway{}
-	rows, err := Conn().Raw(`SELECT *
-	FROM amways AS t1
-	JOIN
-	(
-		SELECT ROUND(RAND() * 
-		(
-		(SELECT MAX(id) FROM amways) 
-		- 
-		(SELECT MIN(id) FROM amways)
-		) 
-		+ 
-		(SELECT MIN(id) FROM amways )
-		) AS id
-	) AS t2 
-	WHERE t1.id >= t2.id and t1.valid > 0 
-	ORDER BY t1.id 
-	`).Limit(limit).Rows()
+	rows, err := Conn().Raw(queryAmwayRand).Limit(limit).Rows()
 	defer rows.Close()
-	for i := 0; rows.Next(); i++ {
+	for rows.Next() {
 		a := new(model.Amway)
 		err = rows.Scan(a)
 		if err != nil {

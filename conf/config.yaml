@@ -15,7 +15,7 @@ user_level_weight: 1
 exp_publish_amway: 10
 exp_interact_amway: 5
 exp_somebody_like_my_amway: 1
-query_amway_rand_limit: 10
+query_amway_rand_limit: 100
 cache_default_expiration_minute: 5
 cache_cleanup_interval_minute: 10
 
