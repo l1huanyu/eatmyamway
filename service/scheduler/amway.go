@@ -1,6 +1,8 @@
 package scheduler
 
 import (
+	"fmt"
+
 	"github.com/l1huanyu/eatmyamway/log"
 	"github.com/l1huanyu/eatmyamway/middleware/database"
 	"github.com/l1huanyu/eatmyamway/model"
@@ -27,8 +29,7 @@ func updateAmwayName(node *Node) {
 			return
 		}
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = node_dashboard
-		node.ctx = nil
+		node.Content = fmt.Sprintf(node_dashboard, node.curuser.Level, node.curuser.NickName)
 	default:
 		a.Name = node.Msg
 		err := database.UpdatesAmway(a)
@@ -48,7 +49,6 @@ func updateAmwayType(node *Node) {
 		// 返回
 		node.curuser.NextHop = _NodeCreateAndUpdateAmwayName
 		node.Content = node_create_and_update_amway_name
-		node.ctx = nil
 	default:
 		a.Type = node.Msg
 		err := database.UpdatesAmway(a)
@@ -68,12 +68,10 @@ func updateAmwayMarketingCopy(node *Node) {
 		// 返回
 		node.curuser.NextHop = _NodeUpdateAmwayType
 		node.Content = node_update_amway_type
-		node.ctx = nil
 	case "2":
 		// 跳过
 		node.curuser.NextHop = _NodeSelectUpdateAmwayFakePortalOrSkip
 		node.Content = node_select_update_amway_fake_portal_or_skip
-		node.ctx = nil
 	default:
 		a.MarketingCopy = node.Msg
 		err := database.UpdatesAmway(a)
@@ -93,12 +91,17 @@ func updateAmwayFakePortal(node *Node) {
 		// 返回
 		node.curuser.NextHop = _NodeSelectUpdateAmwayMarketingCopyOrSkip
 		node.Content = node_select_update_amway_marketing_copy_or_skip
-		node.ctx = nil
 	case "2":
 		// 跳过
+		a.Valid = true
+		err := database.UpdatesAmway(a)
+		if err != nil {
+			log.Error("updateAmwayFakePortal.database.UpdatesAmway", err.Error(), map[string]interface{}{"a.FakePortal": a.FakePortal})
+			return
+		}
+		node.curuser.GainEXP(viper.GetUint("exp_publish_amway"))
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = node_dashboard
-		node.ctx = nil
+		node.Content = fmt.Sprintf(node_dashboard, node.curuser.Level, node.curuser.NickName)
 	default:
 		a.FakePortal = node.Msg
 		a.Valid = true
@@ -109,6 +112,6 @@ func updateAmwayFakePortal(node *Node) {
 		}
 		node.curuser.GainEXP(viper.GetUint("exp_publish_amway"))
 		node.curuser.NextHop = _NodeDashboard
-		node.Content = node_dashboard
+		node.Content = fmt.Sprintf(viper.GetString("publish_success")+"\n\n"+node_dashboard, node.curuser.Level, node.curuser.NickName)
 	}
 }

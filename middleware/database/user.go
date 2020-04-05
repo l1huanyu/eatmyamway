@@ -47,9 +47,8 @@ func UpdateUserNickName(u *model.User) error {
 
 func UpdatesUser(u *model.User) error {
 	return Conn().Model(u).Updates(map[string]interface{}{
-		u.NextHopColumnName():  u.NextHop,
-		u.NickNameColumnName(): u.NickName,
-		u.LevelColumnName():    u.Level,
-		u.EXPColumnName():      u.EXP,
+		u.NextHopColumnName(): u.NextHop,
+		u.LevelColumnName():   u.Level,
+		u.EXPColumnName():     u.EXP,
 	}).Error
 }

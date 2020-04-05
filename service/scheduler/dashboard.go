@@ -44,6 +44,13 @@ func queryAmwayRand(node *Node) {
 		return
 	}
 
+	// 更新或创建聚焦关系
+	err = database.UpdateOrCreateFocusRelation(node.curuser.ID, a.ID)
+	if err != nil {
+		log.Error("queryAmwayRand.database.UpdateOrCreateFocusRelation", err.Error(), map[string]interface{}{"node.curuser.ID": node.curuser.ID, "a.ID": a.UserID})
+		return
+	}
+
 	au, err := database.QueryUserByID(a.UserID)
 	if err != nil {
 		log.Error("queryAmwayRand.database.QueryUserByID", err.Error(), map[string]interface{}{"a.UserID": a.UserID})
@@ -51,7 +58,7 @@ func queryAmwayRand(node *Node) {
 	}
 
 	node.curuser.NextHop = _NodeSelectInteractOrQueryAmway
-	node.Content = fmt.Sprintf(amway_information+"\n\n"+node_select_interact_or_query_amway,
+	node.Content += fmt.Sprintf(amway_information+"\n\n"+node_select_interact_or_query_amway,
 		au.Level, au.NickName, au.ID, a.Name, a.HP, a.Type, a.MarketingCopy, a.FakePortal)
 }
 
