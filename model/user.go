@@ -13,14 +13,16 @@ type User struct {
 }
 
 const (
-	Level0 = iota
-	Level1
-	Level2
-	Level3
-	Level4
-	Level5
-	Level6
+	Level1 = iota + 1 // 获得 0 EXP
+	Level2            // 获得 200 EXP
+	Level3            // 获得 1500 EXP
+	Level4            // 获得 4500 EXP
+	Level5            // 获得 10800 EXP
+	Level6            // 获得 28800 EXP
 )
+
+// 经验值设定：发布安利EXP+10，互动（喜欢，不喜欢）EXP+5，发布的安利被喜欢+1
+var levelEXPList = [...]uint{0, 0, 200, 1500, 4500, 10800, 28800}
 
 func UserTableName() string {
 	return "users"
@@ -44,4 +46,21 @@ func (u *User) LevelColumnName() string {
 
 func (u *User) EXPColumnName() string {
 	return "exp"
+}
+
+// 获得经验值
+func (u *User) GainEXP(exp uint) {
+	u.EXP += exp
+	u.levelUp()
+}
+
+func (u *User) levelUp() {
+	// 满级直接返回
+	if u.Level >= Level6 {
+		return
+	}
+
+	if u.EXP >= levelEXPList[u.Level+1] {
+		u.Level++
+	}
 }

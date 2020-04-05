@@ -27,29 +27,31 @@ func dashboard(node *Node) {
 	node.ctx = option
 }
 
-// 查询生命值最高的有效amway记录，下一跳_NodeSelectInteractOrQueryAmway
-func queryAmwayWithMaxHP(node *Node) {
+// 随机查找效amway记录，下一跳_NodeSelectInteractOrQueryAmway
+func queryAmwayRand(node *Node) {
 	if node.ctx.(int) != _DashboardQueryAmway {
 		return
 	}
 
 	a, err := database.QueryAmwayRand()
-	if err == gorm.ErrRecordNotFound {
-		node.curuser.NextHop = _NodeDashboard
-		node.Content = viper.GetString("not_found")
-	} else {
-		log.Error("queryAmwayWithMaxHP.database.QueryAmwayRand", err.Error(), nil)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			node.curuser.NextHop = _NodeDashboard
+			node.Content = viper.GetString("not_found")
+		} else {
+			log.Error("queryAmwayRand.database.QueryAmwayRand", err.Error(), nil)
+		}
 		return
 	}
 
 	au, err := database.QueryUserByID(a.UserID)
 	if err != nil {
-		log.Error("queryAmwayWithMaxHP.database.QueryUserByID", err.Error(), map[string]interface{}{"a.UserID": a.UserID})
+		log.Error("queryAmwayRand.database.QueryUserByID", err.Error(), map[string]interface{}{"a.UserID": a.UserID})
 		return
 	}
 
 	node.curuser.NextHop = _NodeSelectInteractOrQueryAmway
-	node.Content = fmt.Sprintf(viper.GetString("amway_information")+"\n\n"+viper.GetString("node_select_interact_or_query_amway"),
+	node.Content = fmt.Sprintf(amway_information+"\n\n"+node_select_interact_or_query_amway,
 		au.Level, au.NickName, au.ID, a.Name, a.HP, a.Type, a.MarketingCopy, a.FakePortal)
 }
 
@@ -57,6 +59,15 @@ func createAmway(node *Node) {
 	if node.ctx.(int) != _DashboardCreateAmway {
 		return
 	}
+
+	err := database.CreateAmway(node.curuser.ID, node.curuser.Level)
+	if err != nil {
+		log.Error("createAmway.database.CreateAmway", err.Error(), map[string]interface{}{"node.curuser.ID": node.curuser.ID})
+		return
+	}
+
+	node.curuser.NextHop = _NodeCreateAndUpdateAmwayName
+	node.Content = node_create_and_update_amway_name
 }
 
 func personalInterface(node *Node) {

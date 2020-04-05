@@ -11,12 +11,19 @@ func QueryUserNextHopByOpenID(openID string) (uint, error) {
 	return u.NextHop, err
 }
 
+func QueryUserByID(id uint) (*model.User, error) {
+	u := new(model.User)
+	u.ID = id
+	err := Conn().First(u, u.ID).Error
+	return u, err
+}
+
 func QueryOrCreateUserByOpenID(openID string) (*model.User, error) {
 	u := &model.User{
 		OpenID:    openID,
 		NextHop:   0,
-		NickName:  viper.GetString("default_user_name"),
-		Level:     model.Level0,
+		NickName:  viper.GetString("default_nick_name"),
+		Level:     model.Level1,
 		EXP:       0,
 		AdminRole: false,
 	}
@@ -45,11 +52,4 @@ func UpdatesUser(u *model.User) error {
 		u.LevelColumnName():    u.Level,
 		u.EXPColumnName():      u.EXP,
 	}).Error
-}
-
-func QueryUserByID(id uint) (*model.User, error) {
-	u := new(model.User)
-	u.ID = id
-	err := Conn().First(u, u.ID).Error
-	return u, err
 }

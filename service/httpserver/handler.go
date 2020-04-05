@@ -62,9 +62,9 @@ func receiveMessages(c echo.Context) error {
 		}
 		// 查找当前用户的下一跳
 		node.NextHop, err = database.QueryUserNextHopByOpenID(node.OpenID)
-		if err != nil && err == gorm.ErrRecordNotFound {
+		if err == gorm.ErrRecordNotFound {
 			node.NextHop = scheduler.NodeSubscribe()
-		} else {
+		} else if err != nil {
 			log.Error("database.QueryUserNextHopByOpenID", err.Error(), map[string]interface{}{"node.OpenID": node.OpenID})
 		}
 
