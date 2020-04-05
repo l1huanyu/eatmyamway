@@ -36,13 +36,13 @@ func queryAmwayRand(node *Node) {
 	}
 
 	amways, err := database.QueryAmwayRand(viper.GetInt("query_amway_rand_limit"))
+	if err != nil {
+		log.Error("queryAmwayRand.database.QueryAmwayRand", err.Error(), nil)
+		return
+	}
 	if len(amways) == 0 {
 		node.curuser.NextHop = _NodeDashboard
 		node.Content = viper.GetString("not_found")
-		return
-	}
-	if err != nil {
-		log.Error("queryAmwayRand.database.QueryAmwayRand", err.Error(), nil)
 		return
 	}
 
@@ -52,19 +52,23 @@ func queryAmwayRand(node *Node) {
 		for i := range amways {
 			if _, ok := read.(map[uint]struct{})[amways[i].ID]; !ok {
 				a = amways[i]
+				// 存入缓存
+				read.(map[uint]struct{})[a.ID] = struct{}{}
+				cache.Set(key, read)
 				break
 			}
+		}
+		// 这一批全部已阅
+		if a == nil {
+			node.curuser.NextHop = _NodeDashboard
+			node.Content = viper.GetString("not_found")
+			return
 		}
 	} else {
 		// 缓存过期随机返回
 		a = amways[rand.Intn(len(amways))]
-	}
-
-	// 这一批全部已阅
-	if a.Valid == false {
-		node.curuser.NextHop = _NodeDashboard
-		node.Content = viper.GetString("not_found")
-		return
+		// 存入缓存
+		cache.Set(key, map[uint]struct{}{a.ID: struct{}{}})
 	}
 
 	// 更新或创建聚焦关系

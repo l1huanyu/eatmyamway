@@ -60,7 +60,7 @@ var gScheduler = map[uint]nodeFunc{
 	_NodeSelectUpdateNickNameOrDashboard:      nodeFunc{queryUser, selectUpdateNickNameOrDashboard, updateUserNextHop},
 	_NodeUpdateNickName:                       nodeFunc{queryUser, updateUserNickName, updateUserNextHop},
 	_NodeDashboard:                            nodeFunc{queryUser, dashboard, queryAmwayRand, createAmway, personalInterface, updateUserNextHop},
-	_NodeSelectInteractOrQueryAmway:           nodeFunc{queryUser, queryFocusRelation, selectInteractOrQueryAmway, updatesUser},
+	_NodeSelectInteractOrQueryAmway:           nodeFunc{queryUser, queryFocusRelation, selectInteractOrQueryAmway, updateUserNextHop},
 	_NodeCreateAndUpdateAmwayName:             nodeFunc{queryUser, queryInvalidAmway, updateAmwayName, updateUserNextHop},
 	_NodeUpdateAmwayType:                      nodeFunc{queryUser, queryInvalidAmway, updateAmwayType, updateUserNextHop},
 	_NodeSelectUpdateAmwayMarketingCopyOrSkip: nodeFunc{queryUser, queryInvalidAmway, updateAmwayMarketingCopy, updateUserNextHop},
