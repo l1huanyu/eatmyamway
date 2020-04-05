@@ -22,5 +22,5 @@ func Get(key string) (interface{}, bool) {
 }
 
 func Delete(key string) {
-	return gCache.Delete(key)
+	gCache.Delete(key)
 }
