@@ -59,6 +59,7 @@ func selectInteractOrQueryAmway(node *Node) {
 			log.Error("selectInteractOrQueryAmway.database.UpdateInteractionRelation", err.Error(), map[string]interface{}{"r.InteractionType": r.InteractionType})
 			return
 		}
+		node.Content = node_dislike_amway
 	case 3:
 		// 无动作
 	case 4:
