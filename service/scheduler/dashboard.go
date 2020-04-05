@@ -58,8 +58,8 @@ func queryAmwayRand(node *Node) {
 	}
 
 	node.curuser.NextHop = _NodeSelectInteractOrQueryAmway
-	node.Content += fmt.Sprintf(amway_information+"\n\n"+node_select_interact_or_query_amway,
-		au.NickName, au.Level, au.ID, a.Name, a.HP, a.Type, a.MarketingCopy, a.FakePortal)
+	node.Content += fmt.Sprintf(amway_information+"\n"+node_select_interact_or_query_amway,
+		au.NickName, au.Level, au.ID, a.Name, a.Type, a.HP, a.MarketingCopy, a.FakePortal)
 }
 
 func createAmway(node *Node) {
