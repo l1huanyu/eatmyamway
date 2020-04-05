@@ -7,7 +7,23 @@ import (
 
 func QueryAmwayRand() (*model.Amway, error) {
 	a := new(model.Amway)
-	err := Conn().Where(a.ValidColumnName()+" = ?", true).First(a, "id >= ((SELECT MAX(id) FROM amways)-(SELECT MIN(id) FROM amways)) * RAND() + (SELECT MIN(id) FROM amways)").Error
+	err := Conn().Raw(`SELECT *
+	FROM amways AS t1
+	JOIN
+	(
+		SELECT ROUND(RAND() * 
+		(
+		(SELECT MAX(id) FROM amways) 
+		- 
+		(SELECT MIN(id) FROM amways)
+		) 
+		+ 
+		(SELECT MIN(id) FROM amways )
+		) AS id
+	) AS t2 
+	WHERE t1.id >= t2.id 
+	ORDER BY t1.id 
+	LIMIT 1`).Scan(a).Error
 	return a, err
 }
 
