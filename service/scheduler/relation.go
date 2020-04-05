@@ -66,6 +66,13 @@ func selectInteractOrQueryAmway(node *Node) {
 		// 返回主界面
 		node.curuser.NextHop = _NodeDashboard
 		node.Content = fmt.Sprintf(node_dashboard, node.curuser.NickName, node.curuser.Level, node.curuser.ID)
+		// 取消聚焦
+		r.Focus = false
+		err = database.UpdateFocusRelation(r)
+		if err != nil {
+			log.Error("selectInteractOrQueryAmway.database.UpdateFocusRelation", err.Error(), map[string]interface{}{"r.UserID": r.UserID, "r.AmwayID": r.AmwayID})
+			return
+		}
 		return
 	default:
 		log.Error("queryFocusRelation", "invalid option", map[string]interface{}{"option": option})
