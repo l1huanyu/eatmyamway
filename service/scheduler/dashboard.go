@@ -31,7 +31,7 @@ func dashboard(node *Node) {
 
 // 随机查找效amway记录，下一跳_NodeSelectInteractOrQueryAmway
 func queryAmwayRand(node *Node) {
-	if node.ctx.(int) != _DashboardQueryAmway {
+	if node.ctx == nil || node.ctx.(int) != _DashboardQueryAmway {
 		return
 	}
 
@@ -92,7 +92,7 @@ func queryAmwayRand(node *Node) {
 }
 
 func createAmway(node *Node) {
-	if node.ctx.(int) != _DashboardCreateAmway {
+	if node.ctx == nil || node.ctx.(int) != _DashboardCreateAmway {
 		return
 	}
 
@@ -107,7 +107,7 @@ func createAmway(node *Node) {
 }
 
 func personalInterface(node *Node) {
-	if node.ctx.(int) != _DashboardPersonalInterface {
+	if node.ctx == nil || node.ctx.(int) != _DashboardPersonalInterface {
 		return
 	}
 	node.Content = viper.GetString("not_support")
