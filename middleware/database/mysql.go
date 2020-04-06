@@ -2,6 +2,8 @@ package database
 
 import (
 	"github.com/jinzhu/gorm"
+
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/l1huanyu/eatmyamway/model"
 	"github.com/spf13/viper"
 )
@@ -11,7 +13,8 @@ var gDB *gorm.DB
 
 // Open 打开数据库连接并设置连接属性
 func Open() {
-	gDB, err := gorm.Open(viper.GetString("database_driver"), viper.GetString("database_source"))
+	var err error
+	gDB, err = gorm.Open(viper.GetString("database_driver"), viper.GetString("database_source"))
 	if err != nil {
 		panic(err)
 	}

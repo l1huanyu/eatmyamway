@@ -10,8 +10,17 @@ database_source: user:pass@(host:port)/database?charset=utf8mb4&parseTime=True&l
 database_max_idle_conns: 10
 database_max_open_conns: 100
 database_conn_max_life_time: 3600000000000
+default_amway_hp: 7
+user_level_weight: 1
+exp_publish_amway: 10
+exp_interact_amway: 5
+exp_somebody_like_my_amway: 1
+query_amway_rand_limit: 100
+cache_default_expiration_minute: 5
+cache_cleanup_interval_minute: 10
 
-prologue: Hi~ o(*￣▽￣*)ブ欢迎光临安利小卖部！\n小店共有安利[%d]枚，你已寄售安利[%d]枚~\n客官这是准备？\n0：被人安利\n1：安利别人
-not_support: 请输入有效数字≧ ﹏ ≦
-internal_error: 店小二失踪了，再试一次8~
-not_found: 客官...8好意思...缺货了...请重新选择类型...(✿◡‿◡)
+internal_error: '|д･)...肥肠包芡，由于不明电波干扰，宁输入命令没有生效，请保持正确输入再试一次8~'
+not_found: '|д･)...肥肠包芡，什么都没找到呢...康康其他的吧~'
+not_support: '|д･)...肥肠包芡，这个功能还没开发，康康其他的吧...嘤嘤嘤'
+default_nick_name: 友人A
+publish_success: 发布安利成功~
