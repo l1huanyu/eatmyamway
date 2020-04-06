@@ -20,6 +20,10 @@ func queryInvalidAmway(node *Node) {
 
 func updateAmwayName(node *Node) {
 	a := node.ctx.(*model.Amway)
+	if a == nil {
+		return
+	}
+
 	switch node.Msg {
 	case "1":
 		// 返回
@@ -44,6 +48,10 @@ func updateAmwayName(node *Node) {
 
 func updateAmwayType(node *Node) {
 	a := node.ctx.(*model.Amway)
+	if a == nil {
+		return
+	}
+
 	switch node.Msg {
 	case "1":
 		// 返回
@@ -63,6 +71,10 @@ func updateAmwayType(node *Node) {
 
 func updateAmwayMarketingCopy(node *Node) {
 	a := node.ctx.(*model.Amway)
+	if a == nil {
+		return
+	}
+
 	switch node.Msg {
 	case "1":
 		// 返回
@@ -86,6 +98,10 @@ func updateAmwayMarketingCopy(node *Node) {
 
 func updateAmwayFakePortal(node *Node) {
 	a := node.ctx.(*model.Amway)
+	if a == nil {
+		return
+	}
+
 	switch node.Msg {
 	case "1":
 		// 返回

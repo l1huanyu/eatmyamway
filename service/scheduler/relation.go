@@ -22,9 +22,13 @@ func queryFocusRelation(node *Node) {
 
 func selectInteractOrQueryAmway(node *Node) {
 	r := node.ctx.(*model.Relation)
+	if r == nil {
+		return
+	}
+
 	option, err := strconv.Atoi(node.Msg)
 	if err != nil {
-		log.Error("queryFocusRelation.strconv.Atoi", err.Error(), map[string]interface{}{"node.Msg": node.Msg})
+		log.Error("selectInteractOrQueryAmway.strconv.Atoi", err.Error(), map[string]interface{}{"node.Msg": node.Msg})
 	}
 
 	switch option {
@@ -75,7 +79,7 @@ func selectInteractOrQueryAmway(node *Node) {
 		}
 		return
 	default:
-		log.Error("queryFocusRelation", "invalid option", map[string]interface{}{"option": option})
+		log.Error("selectInteractOrQueryAmway", "invalid option", map[string]interface{}{"option": option})
 		return
 	}
 
