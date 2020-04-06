@@ -8,7 +8,7 @@ import (
 // 按照生命值优先级随机读取N条记录
 func QueryAmwayRand(limit int) ([]*model.Amway, error) {
 	amways := []*model.Amway{}
-	err := Conn().Find(&amways, "valid = 1").Limit(limit).Order("rand()").Error
+	err := Conn().Find(&amways, "valid = 1 order by rand()").Limit(limit).Error
 	return amways, err
 }
 
