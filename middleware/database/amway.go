@@ -25,7 +25,7 @@ func CreateAmway(userID, userLevel uint) error {
 
 func QueryInvalidAmway(userID uint) (*model.Amway, error) {
 	a := new(model.Amway)
-	err := Conn().Where("user_id = ?", userID).First(a, "valid = ?", false).Error
+	err := Conn().Where("user_id = ?", userID).First(a, "valid = ?", 0).Error
 	return a, err
 }
 

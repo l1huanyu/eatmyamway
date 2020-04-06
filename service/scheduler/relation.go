@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
 	"github.com/l1huanyu/eatmyamway/log"
 	"github.com/l1huanyu/eatmyamway/middleware/database"
 	"github.com/l1huanyu/eatmyamway/model"
-	"github.com/spf13/viper"
 )
 
 func queryFocusRelation(node *Node) {
@@ -39,9 +37,7 @@ func selectInteractOrQueryAmway(node *Node) {
 
 			r.InteractionType = model.InteractionLike
 			err = database.UpdateInteractionRelation(r)
-			if err == gorm.ErrRecordNotFound {
-				node.Content = viper.GetString("not_found")
-			} else if err != nil {
+			if err != nil {
 				log.Error("selectInteractOrQueryAmway.database.UpdateInteractionRelation", err.Error(), map[string]interface{}{"r.InteractionType": r.InteractionType})
 				return
 			}
@@ -58,9 +54,7 @@ func selectInteractOrQueryAmway(node *Node) {
 			}
 			r.InteractionType = model.InteractionDislike
 			err = database.UpdateInteractionRelation(r)
-			if err == gorm.ErrRecordNotFound {
-				node.Content = viper.GetString("not_found")
-			} else if err != nil {
+			if err != nil {
 				log.Error("selectInteractOrQueryAmway.database.UpdateInteractionRelation", err.Error(), map[string]interface{}{"r.InteractionType": r.InteractionType})
 				return
 			}
